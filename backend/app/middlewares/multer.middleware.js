@@ -16,7 +16,6 @@ const storage = multer.diskStorage({
         return cb(error, false);
       }
     }
-
   
     const fullFilePath = path.join(uploadPath, file.originalname);
     if (fs.existsSync(fullFilePath)) {

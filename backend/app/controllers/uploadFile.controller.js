@@ -4,7 +4,7 @@ const normalizePath = require("./utils.controller");
 
 const uploadFile = async (req, res) => {
 
-    const { parentId } = req.body;
+    const { parentId, workspace } = req.body;
     const file = req.file;
 
     let filePath = "";
@@ -19,7 +19,7 @@ const uploadFile = async (req, res) => {
     const newFile = {
       _id: normalizePath(filePath),
       name: file.originalname,
-      path: normalizePath(filePath),
+      path: normalizePath(filePath).replace(workspace,""),
       isDirectory: false,
       size: file.size,
       mimeType: file.mimetype,
