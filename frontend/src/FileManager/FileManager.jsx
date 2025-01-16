@@ -38,7 +38,8 @@ const FileManager = ({
   height = "600px",
   width = "100%",
   initialPath = "",
-  onSelectionChange
+  onSelectionChange,
+  filePreviewComponent
 }) => {
   const triggerAction = useTriggerAction();
   const { containerRef, colSizes, isDragging, handleMouseMove, handleMouseUp, handleMouseDown } =
@@ -98,6 +99,7 @@ const FileManager = ({
                   onRefresh={onRefresh}
                   maxFileSize={maxFileSize}
                   filePreviewPath={filePreviewPath}
+                  filePreviewComponent={filePreviewComponent}
                   acceptedFileTypes={acceptedFileTypes}
                   triggerAction={triggerAction}
                 />
@@ -146,6 +148,7 @@ FileManager.propTypes = {
   height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   initialPath: PropTypes.string,
+  filePreviewComponent: PropTypes.func,
 };
 
 export default FileManager;
