@@ -15,7 +15,7 @@ const deleteItem = async (req, res) => {
 
     filesToDelete = [];
     for (let i = 0; i <  ids.length; i++){
-      if (fs.existsSync(BASE_PATH + workspace + ids[i])) {
+      if (fs.existsSync(BASE_PATH + ids[i])) {
         filesToDelete.push( ids[i]);
       }
     }
@@ -25,7 +25,7 @@ const deleteItem = async (req, res) => {
     }
 
     const deletePromises = ids.map(async (item) => {
-      const itemPath = path.join(BASE_PATH, workspace, item);
+      const itemPath = path.join(BASE_PATH, item);
       await fs.promises.rm(itemPath, { recursive: true });
 
     });

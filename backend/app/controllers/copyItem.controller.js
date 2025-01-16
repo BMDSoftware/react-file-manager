@@ -28,7 +28,7 @@ const copyItem = async (req, res) => {
       const srcFullPath = path.join(BASE_PATH, sourceItem);
 
       if (isRootDestination) {
-        const destFullPath = path.join(BASE_PATH, path.basename(sourceItem));
+        const destFullPath = path.join(BASE_PATH + workspace, path.basename(sourceItem));
         await fs.promises.cp(srcFullPath, destFullPath, { recursive: true });
 
       } else {
