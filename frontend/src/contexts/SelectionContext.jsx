@@ -1,14 +1,20 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { validateApiCallback } from "../utils/validateApiCallback";
 
 const SelectionContext = createContext();
 
-export const SelectionProvider = ({ children, onDownload }) => {
+const SelectionProvider = ({ children, onDownload, onSelectionChange }) => {
   const [selectedFiles, setSelectedFiles] = useState([]);
-
+  
   const handleDownload = () => {
     validateApiCallback(onDownload, "onDownload", selectedFiles);
   };
+
+  useEffect(() => {
+    if (onSelectionChange) {
+      onSelectionChange(selectedFiles);
+    }
+  }, [selectedFiles, onSelectionChange]);
 
   return (
     <SelectionContext.Provider value={{ selectedFiles, setSelectedFiles, handleDownload }}>
@@ -17,4 +23,9 @@ export const SelectionProvider = ({ children, onDownload }) => {
   );
 };
 
-export const useSelection = () => useContext(SelectionContext);
+const useSelection = () => {
+  return useContext(SelectionContext);
+};
+
+// Export everything consistently
+export { SelectionProvider, useSelection };

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useContext } from "react";
 import FileManager from "./FileManager/FileManager";
 import { createFolderAPI } from "./api/createFolderAPI";
 import { renameAPI } from "./api/renameAPI";
@@ -10,7 +10,7 @@ import "./App.scss";
 
 function App() {
   const fileUploadConfig = {
-    url: import.meta.env.VITE_API_BASE_URL + "/upload",
+    url: "http://localhost:3000/api/file-system/upload",
   };
   const [isLoading, setIsLoading] = useState(false);
   const [files, setFiles] = useState([]);
@@ -34,7 +34,7 @@ function App() {
   // Create Folder
   const handleCreateFolder = async (name, parentFolder) => {
     setIsLoading(true);
-    const response = await createFolderAPI(name, parentFolder?._id);
+    const response = await createFolderAPI(name, parentFolder?.path);
     if (response.status === 200 || response.status === 201) {
       setFiles((prev) => [...prev, response.data]);
     } else {
@@ -50,8 +50,7 @@ function App() {
   };
 
   const handleFileUploaded = (response) => {
-    const uploadedFile = JSON.parse(response);
-    setFiles((prev) => [...prev, uploadedFile]);
+    setFiles((prev) => [...prev, JSON.parse(response)]);
   };
   //
 
@@ -114,6 +113,7 @@ function App() {
   };
 
   const handleDownload = async (files) => {
+    console.log("downloading files...");
     await downloadFile(files);
   };
 
@@ -123,6 +123,7 @@ function App() {
         <FileManager
           files={files}
           fileUploadConfig={fileUploadConfig}
+          onSelectionChange={(files) => console.log('Selected files:', files)}
           isLoading={isLoading}
           onCreateFolder={handleCreateFolder}
           onFileUploading={handleFileUploading}
@@ -135,11 +136,10 @@ function App() {
           onRefresh={handleRefresh}
           onFileOpen={handleFileOpen}
           onError={handleError}
-          layout="grid"
+          layout="list"
           enableFilePreview
-          maxFileSize={10485760}
-          filePreviewPath={import.meta.env.VITE_API_FILES_BASE_URL}
-          acceptedFileTypes=".txt, .png, .jpg, .jpeg, .pdf, .doc, .docx, .exe"
+          maxFileSize={104857600} 
+          filePreviewPath={"http://localhost:3000"}
           height="100%"
           width="100%"
           initialPath=""
