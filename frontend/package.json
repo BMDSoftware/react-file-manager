@@ -1,7 +1,7 @@
 {
-  "name": "@cubone/react-file-manager",
+  "name": "@bmdsoftware/react-file-manager",
   "private": false,
-  "version": "1.10.5",
+  "version": "1.0.0",
   "type": "module",
   "module": "dist/react-file-manager.es.js",
   "files": [
@@ -47,7 +47,7 @@
   "main": "src/index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Saifullah-dev/react-file-manager.git"
+    "url": "git+https://github.com/BMDSoftware/react-file-manager.git"
   },
   "keywords": [
     "react",
@@ -55,10 +55,10 @@
     "component",
     "react-file explorer"
   ],
-  "author": "Saifullah Zubair",
+  "author": "BMD Software",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Saifullah-dev/react-file-manager/issues"
+    "url": "https://github.com/BMDSoftware/react-file-manager/issues"
   },
-  "homepage": "https://github.com/Saifullah-dev/react-file-manager#readme"
+  "homepage": "https://github.com/BMDSoftware/react-file-manager#readme"
 }
