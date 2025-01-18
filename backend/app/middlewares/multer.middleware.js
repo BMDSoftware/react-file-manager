@@ -16,7 +16,11 @@ const storage = multer.diskStorage({
         return cb(error, false);
       }
     }
-  
+    
+    else{
+      uploadPath = path.join(BASE_PATH, req.body.workspace);
+    }
+
     const fullFilePath = path.join(uploadPath, file.originalname);
     if (fs.existsSync(fullFilePath)) {
       return cb(new multer.MulterError("File already exists!", file), false);

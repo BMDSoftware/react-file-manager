@@ -11,7 +11,7 @@ const uploadFile = async (req, res) => {
     if (parentId) {
       filePath = `${parentId}/${file.originalname}`;
     } else {
-      filePath = `/${file.originalname}`;
+      filePath = `${workspace}/${file.originalname}`;
     }
 
     const stats = await fs.stat(BASE_PATH + filePath);
