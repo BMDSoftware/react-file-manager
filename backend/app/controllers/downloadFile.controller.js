@@ -51,6 +51,9 @@ const downloadFile = async (req, res) => {
       throw err;
     });
 
+    res.setHeader("Content-Disposition", 'attachment; filename="download.zip"');
+    res.setHeader("Content-Type", "application/zip");
+    
     archive.pipe(res);
 
     multipleFiles.forEach((file) => {
