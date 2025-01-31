@@ -16,7 +16,13 @@ async function readDirRecursively(dirPath, workspace) {
     const pathWithoutWorkSpace = relativePath.replace(workspace, "");
     if (file.isDirectory()) {
       // If the file is a directory, recurse into it and add information about each directory
-      const stats = await fs.stat(fullPath);
+      // Ignore files that give errors, e.g. broken symlinks
+      let stats;
+      try {
+        stats = await fs.stat(fullPath);
+      } catch (error) {
+        continue;
+      }
       result.push({
         _id: relativePath,
         name: file.name,
@@ -29,7 +35,13 @@ async function readDirRecursively(dirPath, workspace) {
     }
     else {
       // Otherwise, just push the file's details
-      const stats = await fs.stat(fullPath);
+      // Ignore files that give errors, e.g. broken symlinks
+      let stats;
+      try {
+        stats = await fs.stat(fullPath);
+      } catch (error) {
+        continue;
+      }
       result.push({
         _id: relativePath,
         name: file.name,
