@@ -31,7 +31,6 @@ async function readDirRecursively(dirPath, workspace) {
         createdAt: stats.birthtime,
         updatedAt: stats.mtime,
       });
-      result = result.concat(await readDirRecursively(relativePath, workspace));
     }
     else {
       // Otherwise, just push the file's details
@@ -61,10 +60,11 @@ async function readDirRecursively(dirPath, workspace) {
 const getItems = async (req, res) => {
   try {
     directoryPath = "";
-    const { workspace } = req.query;
-    const files = await readDirRecursively(directoryPath + "/" + workspace, workspace, {
-      withFileTypes: true,
-    });
+    const { workspace, currentPath } = req.query;
+    
+    addPath = currentPath || "";
+
+    const files = await readDirRecursively(directoryPath + "/" + workspace + addPath, workspace);
 
     res.status(200).json(files);
   } catch (error) {

@@ -25,6 +25,7 @@ const FileItem = ({
   triggerAction,
   handleContextMenu,
   setLastSelectedFile,
+  onSelectFolder
 }) => {
   const [fileSelected, setFileSelected] = useState(false);
   const [lastClickTime, setLastClickTime] = useState(0);
@@ -50,6 +51,7 @@ const FileItem = ({
     if (file.isDirectory) {
       setCurrentPath(file.path);
       setSelectedFiles([]);
+      onSelectFolder(file.path);
     } else {
       enableFilePreview && triggerAction.show("previewFile");
     }

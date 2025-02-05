@@ -10,17 +10,43 @@ import "./App.scss";
 
 function App() {
   const fileUploadConfig = {
-    url: "http://localhost:3000/api/file-system/upload",
+    url: "http://localhost:3005/api/file-system/upload",
   };
   const [isLoading, setIsLoading] = useState(false);
   const [files, setFiles] = useState([]);
+  const [currentPath, setCurrentPath] = useState("");
   const isMountRef = useRef(false);
 
-  // Get Files
-  const getFiles = async () => {
+  const fetchWorkspacePath = () => {
+    const elements = ["/workspace1"];
+    const randomIndex = Math.floor(Math.random() * 1);
+    return elements[randomIndex];
+  };
+  
+   // Get Files
+   const getFiles = async () => {
     setIsLoading(true);
-    const response = await getAllFilesAPI();
-    setFiles(response.data);
+    const response = (await getAllFilesAPI(
+      fetchWorkspacePath(),
+      currentPath
+    ));
+
+    // clear files that need to be replaced as to not present old data, for example when a file is deleted
+
+    const currentFullPath = fetchWorkspacePath() + currentPath;
+
+    setFiles((prevFiles) => {
+      // Filter out items that may have suffered some change -> currentPath
+      
+      const filteredFiles = prevFiles.filter((file) => !file._id.startsWith(currentFullPath + "/"));
+
+      const uniqueNewFiles = response.data.filter(
+        (newItem) => !filteredFiles.some((existingItem) => existingItem._id === newItem._id)
+      );
+
+      return ([...filteredFiles, ...uniqueNewFiles]);
+    });
+    
     setIsLoading(false);
   };
 
@@ -28,13 +54,16 @@ function App() {
     if (isMountRef.current) return;
     isMountRef.current = true;
     getFiles();
-  }, []);
-  //
+  }, [files]);
 
   // Create Folder
   const handleCreateFolder = async (name, parentFolder) => {
     setIsLoading(true);
-    const response = await createFolderAPI(name, parentFolder?.path);
+    const response = (await createFolderAPI(
+      name,
+      parentFolder?._id,
+      fetchWorkspacePath(),
+    ))
     if (response.status === 200 || response.status === 201) {
       setFiles((prev) => [...prev, response.data]);
     } else {
@@ -42,22 +71,21 @@ function App() {
     }
     setIsLoading(false);
   };
-  //
 
   // File Upload Handlers
-  const handleFileUploading = (file, parentFolder) => {
-    return { parentId: parentFolder?._id };
+  const handleFileUploading = (_file, parentFolder) => {
+    return { parentId: parentFolder?._id, workspace: fetchWorkspacePath() };
   };
 
   const handleFileUploaded = (response) => {
-    setFiles((prev) => [...prev, JSON.parse(response)]);
+    const uploadedFile = JSON.parse(response);
+    setFiles((prev) => [...prev, uploadedFile]);
   };
-  //
 
   // Rename File/Folder
   const handleRename = async (file, newName) => {
     setIsLoading(true);
-    const response = await renameAPI(file._id, newName);
+    const response = await renameAPI(file._id, newName, fetchWorkspacePath());
     if (response.status === 200) {
       getFiles();
     } else {
@@ -65,57 +93,89 @@ function App() {
     }
     setIsLoading(false);
   };
-  //
 
   // Delete File/Folder
   const handleDelete = async (files) => {
     setIsLoading(true);
     const idsToDelete = files.map((file) => file._id);
-    const response = await deleteAPI(idsToDelete);
+    const response = await deleteAPI(idsToDelete, fetchWorkspacePath());
     if (response.status === 200) {
       getFiles();
     } else {
       console.error(response);
-      setIsLoading(false);
     }
+    setIsLoading(false);
   };
-  //
+
 
   // Paste File/Folder
-  const handlePaste = async (copiedItems, destinationFolder, operationType) => {
+  const handlePaste = async (
+    copiedItems,
+    destinationFolder,
+    operationType,
+  ) => {
     setIsLoading(true);
     const copiedItemIds = copiedItems.map((item) => item._id);
     if (operationType === "copy") {
-      const response = await copyItemAPI(copiedItemIds, destinationFolder?._id);
+      try {
+        (await copyItemAPI(
+          copiedItemIds,
+          destinationFolder?._id,
+          fetchWorkspacePath(),
+        ))
+        getFiles();
+      } catch (error) {
+        setIsLoading(false);
+      }
     } else {
-      const response = await moveItemAPI(copiedItemIds, destinationFolder?._id);
+      try {
+        (await moveItemAPI(
+          copiedItemIds,
+          destinationFolder?._id,
+          fetchWorkspacePath(),
+        ))
+        getFiles();
+      } catch (error) {
+        setIsLoading(false);
+      }
     }
-    await getFiles();
-  };
-  //
-
-  const handleLayoutChange = (layout) => {
-    console.log(layout);
   };
 
   // Refresh Files
   const handleRefresh = () => {
     getFiles();
   };
-  //
-
-  const handleFileOpen = (file) => {
-    console.log(`Opening file: ${file.name}`);
-  };
 
   const handleError = (error, file) => {
-    console.error(error);
+    console.error(`Error on file: ${file.name}`, error);
   };
 
   const handleDownload = async (files) => {
-    console.log("downloading files...");
     await downloadFile(files);
   };
+
+  const handleLayoutChange = async (layout) => {
+  }
+
+  const fetchData = async (additionalPath) => {
+    try {
+      const response = await getAllFilesAPI(fetchWorkspacePath(), additionalPath);
+      const data = await response.data;
+      
+      setFiles((prevFiles) => {
+        // Filter out items that already exist
+        const uniqueNewFiles = data.filter(
+          (newItem) => !prevFiles.some((existingItem) => existingItem._id === newItem._id)
+        );
+        return ([...prevFiles, ...uniqueNewFiles]);
+      });
+
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+    setCurrentPath(additionalPath);
+  };
+
 
   return (
     <div className="app">
@@ -134,7 +194,6 @@ function App() {
           onDelete={handleDelete}
           onLayoutChange={handleLayoutChange}
           onRefresh={handleRefresh}
-          onFileOpen={handleFileOpen}
           onError={handleError}
           layout="list"
           enableFilePreview
@@ -143,6 +202,7 @@ function App() {
           height="100%"
           width="100%"
           initialPath=""
+          onSelectFolder={fetchData}
         />
       </div>
     </div>

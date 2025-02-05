@@ -39,7 +39,8 @@ const FileManager = ({
   width = "100%",
   initialPath = "",
   onSelectionChange,
-  filePreviewComponent
+  filePreviewComponent,
+  onSelectFolder
 }) => {
   const triggerAction = useTriggerAction();
   const { containerRef, colSizes, isDragging, handleMouseMove, handleMouseUp, handleMouseDown } =
@@ -71,7 +72,7 @@ const FileManager = ({
                   className="files-container"
                 >
                   <div className="navigation-pane" style={{ width: colSizes.col1 + "%" }}>
-                    <NavigationPane />
+                    <NavigationPane onSelectFolder={onSelectFolder}/>
                     <div
                       className={`sidebar-resize ${isDragging ? "sidebar-dragging" : ""}`}
                       onMouseDown={handleMouseDown}
@@ -79,7 +80,7 @@ const FileManager = ({
                   </div>
 
                   <div className="folders-preview" style={{ width: colSizes.col2 + "%" }}>
-                    <BreadCrumb />
+                    <BreadCrumb onSelectFolder={onSelectFolder}/>
                     <FileList
                       onCreateFolder={onCreateFolder}
                       onRename={onRename}
@@ -87,6 +88,7 @@ const FileManager = ({
                       onRefresh={onRefresh}
                       enableFilePreview={enableFilePreview}
                       triggerAction={triggerAction}
+                      onSelectFolder={onSelectFolder}
                     />
                   </div>
                 </section>

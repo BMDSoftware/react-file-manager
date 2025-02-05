@@ -4,7 +4,7 @@ import { useFileNavigation } from "../../contexts/FileNavigationContext";
 import { useDetectOutsideClick } from "../../hooks/useDetectOutsideClick";
 import "./BreadCrumb.scss";
 
-const BreadCrumb = () => {
+const BreadCrumb = ({onSelectFolder}) => {
   const [folders, setFolders] = useState([]);
   const [hiddenFolders, setHiddenFolders] = useState([]);
   const [hiddenFoldersWidth, setHiddenFoldersWidth] = useState([]);
@@ -34,6 +34,7 @@ const BreadCrumb = () => {
 
   const switchPath = (path) => {
     setCurrentPath(path);
+    onSelectFolder(path);
   };
 
   const getBreadCrumbWidth = () => {

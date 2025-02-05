@@ -1,8 +1,9 @@
 import { api } from "./api";
 
-export const getAllFilesAPI = async () => {
+export const getAllFilesAPI = async (workspace, additionalPath) => {
   try {
-    const response = await api.get();
+    const params = { workspace, additionalPath };
+    const response = await api.get("", {params});
     return response;
   } catch (error) {
     return error;
