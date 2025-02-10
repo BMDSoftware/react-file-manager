@@ -6,7 +6,7 @@ const BASE_PATH = require('./filesystem.controller');
 
 const downloadFile = async (req, res) => {
   try {
-    let files = req.query.files;
+    let { files } = req.body;
     const isSingleFile = !Array.isArray(files);
     const isMultipleFiles = Array.isArray(files);
 

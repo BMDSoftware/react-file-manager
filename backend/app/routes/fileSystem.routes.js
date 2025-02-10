@@ -13,7 +13,7 @@ router.post("/folder", createFolderController);
 router.post("/upload", upload.single("file"), uploadFileController);
 router.post("/copy", copyItemController);
 router.get("/", getItemsController);
-router.get("/download", downloadFileController);
+router.post("/download", downloadFileController);
 router.put("/move", moveItemController);
 router.patch("/rename", renameItemController);
 router.delete("/", deleteItemController);

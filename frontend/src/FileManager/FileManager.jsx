@@ -14,6 +14,7 @@ import { useColumnResize } from "../hooks/useColumnResize";
 import PropTypes from "prop-types";
 import { dateStringValidator, urlValidator } from "../validators/propValidators";
 import "./FileManager.scss";
+import "./polyfill.js";
 
 const FileManager = ({
   files,
