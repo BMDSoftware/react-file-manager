@@ -3,11 +3,13 @@ import { validateApiCallback } from "../utils/validateApiCallback";
 
 const SelectionContext = createContext();
 
-const SelectionProvider = ({ children, onDownload, onSelectionChange }) => {
+const SelectionProvider = ({ children, onDownload, onSelectionChange, allowDownload }) => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   
   const handleDownload = () => {
-    validateApiCallback(onDownload, "onDownload", selectedFiles);
+    if (allowDownload){
+      validateApiCallback(onDownload, "onDownload", selectedFiles);
+    }
   };
 
   useEffect(() => {

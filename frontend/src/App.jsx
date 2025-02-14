@@ -203,6 +203,12 @@ function App() {
           width="100%"
           initialPath=""
           onSelectFolder={fetchData}
+          allowUpload = {false}
+          allowDownload = {false}
+          allowFolderCreation = {false}
+          allowDelete = {false}
+          allowRename = {false}
+          allowMoveOrCopy= {false}
         />
       </div>
     </div>

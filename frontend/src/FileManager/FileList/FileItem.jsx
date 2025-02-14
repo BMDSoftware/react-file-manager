@@ -25,7 +25,8 @@ const FileItem = ({
   triggerAction,
   handleContextMenu,
   setLastSelectedFile,
-  onSelectFolder
+  onSelectFolder,
+  permissions
 }) => {
   const [fileSelected, setFileSelected] = useState(false);
   const [lastClickTime, setLastClickTime] = useState(0);
@@ -196,7 +197,7 @@ const FileItem = ({
       onContextMenu={handleItemContextMenu}
       onMouseOver={handleMouseOver}
       onMouseLeave={handleMouseLeave}
-      draggable={fileSelected}
+      draggable={permissions["move"] && fileSelected}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onDragEnter={handleDragEnterOver}

@@ -41,9 +41,19 @@ const FileManager = ({
   initialPath = "",
   onSelectionChange,
   filePreviewComponent,
-  onSelectFolder
+  onSelectFolder,
+  allowUpload = true,
+  allowDownload = true,
+  allowFolderCreation = true,
+  allowDelete = true,
+  allowRename = true,
+  allowMoveOrCopy= true
 }) => {
-  const triggerAction = useTriggerAction();
+
+  const permissions = {"uploadFile" : allowUpload, "download" : allowDownload, "createFolder" : allowFolderCreation, "delete" : allowDelete, "rename": allowRename, "move": allowMoveOrCopy, "copy": allowMoveOrCopy}
+
+  const triggerAction = useTriggerAction(permissions);
+
   const { containerRef, colSizes, isDragging, handleMouseMove, handleMouseUp, handleMouseDown } =
     useColumnResize(20, 80);
 
@@ -56,15 +66,16 @@ const FileManager = ({
       <Loader isLoading={isLoading} />
       <FilesProvider filesData={files} onError={onError}>
         <FileNavigationProvider initialPath={initialPath}>
-          <SelectionProvider onDownload={onDownload} onSelectionChange={onSelectionChange}>
+          <SelectionProvider onDownload={onDownload} onSelectionChange={onSelectionChange} allowDownload={allowDownload}>
             <ClipBoardProvider onPaste={onPaste}>
               <LayoutProvider layout={layout}>
                 <Toolbar
-                  allowCreateFolder
-                  allowUploadFile
+                  allowCreateFolder={permissions["createFolder"]}
+                  allowUploadFile={permissions["uploadFile"]}
                   onLayoutChange={onLayoutChange}
                   onRefresh={onRefresh}
                   triggerAction={triggerAction}
+                  permissions={permissions}
                 />
                 <section
                   ref={containerRef}
@@ -90,6 +101,7 @@ const FileManager = ({
                       enableFilePreview={enableFilePreview}
                       triggerAction={triggerAction}
                       onSelectFolder={onSelectFolder}
+                      permissions={permissions}
                     />
                   </div>
                 </section>
@@ -105,6 +117,7 @@ const FileManager = ({
                   filePreviewComponent={filePreviewComponent}
                   acceptedFileTypes={acceptedFileTypes}
                   triggerAction={triggerAction}
+                  permissions={permissions}
                 />
               </LayoutProvider>
             </ClipBoardProvider>

@@ -15,7 +15,8 @@ const FileList = ({
   onRefresh,
   enableFilePreview,
   triggerAction,
-  onSelectFolder
+  onSelectFolder,
+  permissions
 }) => {
   const { currentPathFiles } = useFileNavigation();
   const filesViewRef = useRef(null);
@@ -32,7 +33,7 @@ const FileList = ({
     selectedFileIndexes,
     clickPosition,
     isSelectionCtx,
-  } = useFileList(onRefresh, enableFilePreview, triggerAction, onSelectFolder);
+  } = useFileList(onRefresh, enableFilePreview, triggerAction, onSelectFolder, permissions);
 
   const contextMenuRef = useDetectOutsideClick(() => setVisible(false));
 
@@ -63,6 +64,7 @@ const FileList = ({
               setVisible={setVisible}
               setLastSelectedFile={setLastSelectedFile}
               onSelectFolder={onSelectFolder}
+              permissions={permissions}
             />
           ))}
         </>

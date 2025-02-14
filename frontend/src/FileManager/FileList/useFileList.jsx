@@ -12,7 +12,7 @@ import { useFileNavigation } from "../../contexts/FileNavigationContext";
 import { duplicateNameHandler } from "../../utils/duplicateNameHandler";
 import { validateApiCallback } from "../../utils/validateApiCallback";
 
-const useFileList = (onRefresh, enableFilePreview, triggerAction, onSelectFolder) => {
+const useFileList = (onRefresh, enableFilePreview, triggerAction, onSelectFolder, permissions) => {
   const [selectedFileIndexes, setSelectedFileIndexes] = useState([]);
   const [visible, setVisible] = useState(false);
   const [isSelectionCtx, setIsSelectionCtx] = useState(false);
@@ -120,12 +120,14 @@ const useFileList = (onRefresh, enableFilePreview, triggerAction, onSelectFolder
       title: "New folder",
       icon: <BsFolderPlus size={18} />,
       onClick: handleCreateNewFolder,
+      hidden: !permissions["createFolder"]
     },
     {
       title: "Upload",
       icon: <MdOutlineFileUpload size={18} />,
       onClick: handleUpload,
       divider: true,
+      hidden: !permissions["uploadFile"]
     },
     {
       title: "Select all",
@@ -145,37 +147,40 @@ const useFileList = (onRefresh, enableFilePreview, triggerAction, onSelectFolder
       title: "Cut",
       icon: <BsScissors size={19} />,
       onClick: () => handleMoveOrCopyItems(true),
+      hidden: !permissions["copy"]
     },
     {
       title: "Copy",
       icon: <BsCopy strokeWidth={0.1} size={17} />,
       onClick: () => handleMoveOrCopyItems(false),
       divider: !lastSelectedFile?.isDirectory,
+      hidden: !permissions["copy"]
     },
     {
       title: "Paste",
       icon: <FaRegPaste size={18} />,
       onClick: handleFilePasting,
       className: `${clipBoard ? "" : "disable-paste"}`,
-      hidden: !lastSelectedFile?.isDirectory,
+      hidden: !permissions["copy"] || !lastSelectedFile?.isDirectory,
       divider: true,
     },
     {
       title: "Rename",
       icon: <BiRename size={19} />,
       onClick: handleRenaming,
-      hidden: selectedFiles.length > 1,
+      hidden: !permissions["rename"] || selectedFiles.length > 1,
     },
     {
       title: "Download",
       icon: <MdOutlineFileDownload size={18} />,
       onClick: handleDownloadItems,
-      hidden: lastSelectedFile?.isDirectory,
+      hidden: !permissions["download"] || lastSelectedFile?.isDirectory,
     },
     {
       title: "Delete",
       icon: <MdOutlineDelete size={19} />,
       onClick: handleDelete,
+      hidden: !permissions["delete"]
     },
   ];
   //

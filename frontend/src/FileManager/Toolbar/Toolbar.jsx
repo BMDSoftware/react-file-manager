@@ -23,6 +23,7 @@ const Toolbar = ({
   onLayoutChange,
   onRefresh,
   triggerAction,
+  permissions
 }) => {
   const [showToggleViewMenu, setShowToggleViewMenu] = useState(false);
   const { currentFolder } = useFileNavigation();
@@ -47,7 +48,7 @@ const Toolbar = ({
     {
       icon: <FaRegPaste size={18} />,
       text: "Paste",
-      permission: !!clipBoard,
+      permission: permissions["copy"] && !!clipBoard,
       onClick: handleFilePasting,
     },
   ];
@@ -83,25 +84,26 @@ const Toolbar = ({
       <div className="toolbar file-selected">
         <div className="file-action-container">
           <div>
-            <button className="item-action file-action" onClick={() => handleCutCopy(true)}>
+            {permissions["copy"] && <button className="item-action file-action" onClick={() => handleCutCopy(true)}>
               <BsScissors size={18} />
               <span>Cut</span>
             </button>
-            <button className="item-action file-action" onClick={() => handleCutCopy(false)}>
+            }
+            {permissions["copy"] && <button className="item-action file-action" onClick={() => handleCutCopy(false)}>
               <BsCopy strokeWidth={0.1} size={17} />
-              <span>Copy</span>
-            </button>
-            {clipBoard?.files?.length > 0 && (
+                <span>Copy</span>
+              </button>
+            }
+            {permissions["copy"] && clipBoard?.files?.length > 0 && (
               <button
                 className="item-action file-action"
                 onClick={handleFilePasting}
-                // disabled={!clipBoard}
               >
                 <FaRegPaste size={18} />
                 <span>Paste</span>
               </button>
             )}
-            {selectedFiles.length === 1 && (
+            {permissions["rename"] && selectedFiles.length === 1 && (
               <button
                 className="item-action file-action"
                 onClick={() => triggerAction.show("rename")}
@@ -110,19 +112,20 @@ const Toolbar = ({
                 <span>Rename</span>
               </button>
             )}
-            {!selectedFiles.isDirectory && (
+            {permissions["download"] && !selectedFiles.isDirectory && (
               <button className="item-action file-action" onClick={handleDownloadItems}>
                 <MdOutlineFileDownload size={19} />
                 <span>Download</span>
               </button>
             )}
-            <button
-              className="item-action file-action"
-              onClick={() => triggerAction.show("delete")}
-            >
-              <MdOutlineDelete size={19} />
-              <span>Delete</span>
-            </button>
+            {permissions["delete"] && <button
+                className="item-action file-action"
+                onClick={() => triggerAction.show("delete")}
+              >
+                <MdOutlineDelete size={19} />
+                <span>Delete</span>
+              </button>
+            }
           </div>
           <button
             className="item-action file-action"

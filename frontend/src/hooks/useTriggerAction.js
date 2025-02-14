@@ -1,12 +1,14 @@
 import { useState } from "react";
 
-export const useTriggerAction = () => {
+export const useTriggerAction = (permissions) => {
   const [isActive, setIsActive] = useState(false);
   const [actionType, setActionType] = useState(null);
 
   const show = (type) => {
-    setIsActive(true);
-    setActionType(type);
+    if (permissions[type]){
+      setIsActive(true);
+      setActionType(type);
+    }
   };
 
   const close = () => {
