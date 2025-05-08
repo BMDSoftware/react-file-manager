@@ -49,9 +49,9 @@ async function readDir(dirPath, workspace, offset, limit, state = { count: 0, co
 const getItems = async (req, res) => {
   try {
     directoryPath = "";
-    const { workspace, additionalPath, offset, limit } = req.query;
+    const { workspace, currentPath, offset, limit } = req.query;
     
-    addPath = additionalPath || "";
+    addPath = currentPath || "";
 
     const files = await readDir(directoryPath + "/" + workspace + addPath, workspace, offset, limit);
 
