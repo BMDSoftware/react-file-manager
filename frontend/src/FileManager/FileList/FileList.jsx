@@ -44,7 +44,6 @@ const FileList = ({
   const contextMenuRef = useDetectOutsideClick(() => setVisible(false));
 
   const canLoadMore = currentFetched < currentTotal;
-  console.log("current number of files", currentTotal);
 
   return (
     <div
