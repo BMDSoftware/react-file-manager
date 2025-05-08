@@ -47,7 +47,11 @@ const FileManager = ({
   allowFolderCreation = true,
   allowDelete = true,
   allowRename = true,
-  allowMoveOrCopy= true
+  allowMoveOrCopy= true,
+  lazyLoading = false,
+  loadMoreFiles,
+  currentTotal = 0,
+  currentFetched = 0
 }) => {
 
   const permissions = {"uploadFile" : allowUpload, "download" : allowDownload, "createFolder" : allowFolderCreation, "delete" : allowDelete, "rename": allowRename, "move": allowMoveOrCopy, "copy": allowMoveOrCopy}
@@ -102,6 +106,10 @@ const FileManager = ({
                       triggerAction={triggerAction}
                       onSelectFolder={onSelectFolder}
                       permissions={permissions}
+                      lazyLoading={lazyLoading}
+                      loadMoreFiles={loadMoreFiles}
+                      currentTotal={currentTotal}
+                      currentFetched={currentFetched}
                     />
                   </div>
                 </section>

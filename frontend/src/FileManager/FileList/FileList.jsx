@@ -7,6 +7,8 @@ import { useDetectOutsideClick } from "../../hooks/useDetectOutsideClick";
 import useFileList from "./useFileList";
 import FilesHeader from "./FilesHeader";
 import "./FileList.scss";
+import Button from "../../components/Button/Button";
+import { MdOutlineFileDownload } from "react-icons/md";
 
 const FileList = ({
   onCreateFolder,
@@ -16,7 +18,11 @@ const FileList = ({
   enableFilePreview,
   triggerAction,
   onSelectFolder,
-  permissions
+  permissions,
+  lazyLoading,
+  loadMoreFiles,
+  currentTotal,
+  currentFetched
 }) => {
   const { currentPathFiles } = useFileNavigation();
   const filesViewRef = useRef(null);
@@ -36,6 +42,9 @@ const FileList = ({
   } = useFileList(onRefresh, enableFilePreview, triggerAction, onSelectFolder, permissions);
 
   const contextMenuRef = useDetectOutsideClick(() => setVisible(false));
+
+  const canLoadMore = currentFetched < currentTotal;
+  console.log("current number of files", currentTotal);
 
   return (
     <div
@@ -67,8 +76,38 @@ const FileList = ({
               permissions={permissions}
             />
           ))}
+
+          
+          
+          {lazyLoading && (
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center',
+              marginTop: '2rem',
+              gridColumn: '1 / -1', // Span the full width of the grid
+              width: '100%',
+            }}
+          >
+            {canLoadMore && (
+            <Button onClick={loadMoreFiles} padding="0.45rem .45rem">
+              <MdOutlineFileDownload size={15} />
+              <span>Load More Files</span>
+            </Button>
+            )}
+            
+            <div style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#666' }}>
+              Showing {currentFetched} of {currentTotal} files
+            </div>
+          </div>
+        )}
+          
         </>
-      ) : (
+      )
+      : (
         <div className="empty-folder">This folder is empty.</div>
       )}
 
