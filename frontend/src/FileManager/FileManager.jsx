@@ -110,6 +110,7 @@ const FileManager = ({
                       loadMoreFiles={loadMoreFiles}
                       currentTotal={currentTotal}
                       currentFetched={currentFetched}
+                      isLoading={isLoading}
                     />
                   </div>
                 </section>

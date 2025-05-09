@@ -22,7 +22,8 @@ const FileList = ({
   lazyLoading,
   loadMoreFiles,
   currentTotal,
-  currentFetched
+  currentFetched,
+  isLoading
 }) => {
   const { currentPathFiles } = useFileNavigation();
   const filesViewRef = useRef(null);
@@ -92,7 +93,7 @@ const FileList = ({
             }}
           >
             {canLoadMore && (
-            <Button onClick={loadMoreFiles} padding="0.45rem .45rem">
+            <Button onClick={loadMoreFiles} padding="0.45rem .45rem" disabled={isLoading}>
               <MdOutlineFileDownload size={15} />
               <span>Load More Files</span>
             </Button>

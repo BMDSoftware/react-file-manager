@@ -26,6 +26,10 @@
   }
 }
 
+.fm-button:disabled {
+  opacity: 0.3;
+}
+
 .fm-button-danger {
   background-color: #f44336;
   color: white;
