@@ -24,7 +24,7 @@ const DeleteAction = ({ triggerAction, onDelete }) => {
   };
 
   return (
-    <div className="file-delete-confirm">
+    selectedFiles.length > 0 && <div className="file-delete-confirm">
       <p className="file-delete-confirm-text">{deleteMsg}</p>
       <div className="file-delete-confirm-actions">
         <Button type="secondary" onClick={() => triggerAction.close()}>

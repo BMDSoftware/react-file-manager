@@ -1,23 +1,15 @@
-const FileSystem = require("../models/FileSystem.model");
 const path = require("path");
 const fs = require("fs");
-const mongoose = require("mongoose");
 const archiver = require("archiver");
+const BASE_PATH = require('./filesystem.controller');
+
 
 const downloadFile = async (req, res) => {
-  // Todo: Update download request query swagger docs.
-  // #swagger.summary = 'Downloads file/folder(s).'
-  /*  #swagger.parameters['filePath'] = {
-          in: 'query',
-          type: 'string',
-          required: 'true',
-      }
-      #swagger.responses[200] = {description:'File Downloaded Successfully'}
-  */
   try {
-    let files = req.query.files;
-    const isSingleFile = mongoose.Types.ObjectId.isValid(files);
+    let { files } = req.body;
+    const isSingleFile = !Array.isArray(files);
     const isMultipleFiles = Array.isArray(files);
+
 
     if (!files || (!isSingleFile && !isMultipleFiles)) {
       return res
@@ -26,23 +18,29 @@ const downloadFile = async (req, res) => {
     }
 
     if (isSingleFile) {
-      const file = await FileSystem.findById(files);
-      if (!file) return res.status(404).json({ error: "File not found!" });
-
-      if (file.isDirectory) {
+      
+      const isDirectory = fs.statSync(BASE_PATH + files).isDirectory();
+      if (isDirectory) {
         files = [files];
       } else {
-        const filePath = path.join(__dirname, "../../public/uploads", file.path);
-        if (fs.existsSync(filePath)) {
-          res.setHeader("Content-Disposition", `attachment; filename="${file.name}"`);
-          return res.sendFile(filePath);
+        if (fs.existsSync(BASE_PATH + files)) {
+          const filename = files.replace("/", "")
+          res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+          // sending the file requires the full path in the host
+          return res.sendFile(path.join(__dirname, '../../' + BASE_PATH, files)); 
         } else {
           return res.status(404).send("File not found");
         }
       }
     }
-
-    const multipleFiles = await FileSystem.find({ _id: { $in: files } });
+    
+    const multipleFiles = [];
+    for (let i = 0; i <  files.length; i++){
+      if (fs.existsSync(BASE_PATH + files[i])) {
+        multipleFiles.push( files[i]);
+      }
+    }
+    
     if (!multipleFiles || multipleFiles.length !== files.length) {
       return res.status(404).json({ error: "One or more of the provided file IDs do not exist." });
     }
@@ -53,15 +51,19 @@ const downloadFile = async (req, res) => {
       throw err;
     });
 
+    res.setHeader("Content-Disposition", 'attachment; filename="download.zip"');
+    res.setHeader("Content-Type", "application/zip");
+    
     archive.pipe(res);
 
     multipleFiles.forEach((file) => {
-      const filePath = path.join(__dirname, "../../public/uploads", file.path);
+      const filePath = BASE_PATH + file;
       if (fs.existsSync(filePath)) {
-        if (file.isDirectory) {
-          archive.directory(filePath, file.name);
+        const isDirectory = fs.statSync(BASE_PATH + file).isDirectory();
+        if (isDirectory) {
+          archive.directory(filePath, path.basename(file));
         } else {
-          archive.file(filePath, { name: file.name });
+          archive.file(filePath, {name: path.basename(file)});
         }
       } else {
         console.log("File not found");

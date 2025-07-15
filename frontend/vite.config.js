@@ -6,6 +6,9 @@ import packageJson from "./package.json";
 export default defineConfig({
   publicDir: false,
   plugins: [react()],
+  server: {
+    host: '0.0.0.0',
+  },
   build: {
     lib: {
       entry: "./src/index.js",

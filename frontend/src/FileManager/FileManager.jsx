@@ -14,6 +14,7 @@ import { useColumnResize } from "../hooks/useColumnResize";
 import PropTypes from "prop-types";
 import { dateStringValidator, urlValidator } from "../validators/propValidators";
 import "./FileManager.scss";
+import "./polyfill.js";
 
 const FileManager = ({
   files,
@@ -38,9 +39,25 @@ const FileManager = ({
   height = "600px",
   width = "100%",
   initialPath = "",
+  onSelectionChange,
   filePreviewComponent,
+  onSelectFolder,
+  allowUpload = true,
+  allowDownload = true,
+  allowFolderCreation = true,
+  allowDelete = true,
+  allowRename = true,
+  allowMoveOrCopy= true,
+  lazyLoading = false,
+  loadMoreFiles,
+  currentTotal = 0,
+  currentFetched = 0
 }) => {
-  const triggerAction = useTriggerAction();
+
+  const permissions = {"uploadFile" : allowUpload, "download" : allowDownload, "createFolder" : allowFolderCreation, "delete" : allowDelete, "rename": allowRename, "move": allowMoveOrCopy, "copy": allowMoveOrCopy}
+
+  const triggerAction = useTriggerAction(permissions);
+
   const { containerRef, colSizes, isDragging, handleMouseMove, handleMouseUp, handleMouseDown } =
     useColumnResize(20, 80);
 
@@ -53,15 +70,16 @@ const FileManager = ({
       <Loader isLoading={isLoading} />
       <FilesProvider filesData={files} onError={onError}>
         <FileNavigationProvider initialPath={initialPath}>
-          <SelectionProvider onDownload={onDownload}>
+          <SelectionProvider onDownload={onDownload} onSelectionChange={onSelectionChange} allowDownload={allowDownload}>
             <ClipBoardProvider onPaste={onPaste}>
               <LayoutProvider layout={layout}>
                 <Toolbar
-                  allowCreateFolder
-                  allowUploadFile
+                  allowCreateFolder={permissions["createFolder"]}
+                  allowUploadFile={permissions["uploadFile"]}
                   onLayoutChange={onLayoutChange}
                   onRefresh={onRefresh}
                   triggerAction={triggerAction}
+                  permissions={permissions}
                 />
                 <section
                   ref={containerRef}
@@ -70,7 +88,7 @@ const FileManager = ({
                   className="files-container"
                 >
                   <div className="navigation-pane" style={{ width: colSizes.col1 + "%" }}>
-                    <NavigationPane />
+                    <NavigationPane onSelectFolder={onSelectFolder}/>
                     <div
                       className={`sidebar-resize ${isDragging ? "sidebar-dragging" : ""}`}
                       onMouseDown={handleMouseDown}
@@ -78,7 +96,7 @@ const FileManager = ({
                   </div>
 
                   <div className="folders-preview" style={{ width: colSizes.col2 + "%" }}>
-                    <BreadCrumb />
+                    <BreadCrumb onSelectFolder={onSelectFolder}/>
                     <FileList
                       onCreateFolder={onCreateFolder}
                       onRename={onRename}
@@ -86,6 +104,13 @@ const FileManager = ({
                       onRefresh={onRefresh}
                       enableFilePreview={enableFilePreview}
                       triggerAction={triggerAction}
+                      onSelectFolder={onSelectFolder}
+                      permissions={permissions}
+                      lazyLoading={lazyLoading}
+                      loadMoreFiles={loadMoreFiles}
+                      currentTotal={currentTotal}
+                      currentFetched={currentFetched}
+                      isLoading={isLoading}
                     />
                   </div>
                 </section>
@@ -101,6 +126,7 @@ const FileManager = ({
                   filePreviewComponent={filePreviewComponent}
                   acceptedFileTypes={acceptedFileTypes}
                   triggerAction={triggerAction}
+                  permissions={permissions}
                 />
               </LayoutProvider>
             </ClipBoardProvider>

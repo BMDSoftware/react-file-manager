@@ -17,12 +17,13 @@ const Actions = ({
   filePreviewComponent,
   acceptedFileTypes,
   triggerAction,
+  permissions
 }) => {
   const [activeAction, setActiveAction] = useState(null);
   const { selectedFiles } = useSelection();
 
   // Triggers all the keyboard shortcuts based actions
-  useShortcutHandler(triggerAction, onRefresh);
+  useShortcutHandler(triggerAction, onRefresh, permissions);
 
   const actionTypes = {
     uploadFile: {
@@ -61,7 +62,13 @@ const Actions = ({
       if (actionType === "previewFile") {
         actionTypes[actionType].title = selectedFiles?.name ?? "Preview";
       }
-      setActiveAction(actionTypes[actionType]);
+      // prevent delete popup from appearing when no files are selected
+      if (actionType == "delete" && selectedFiles?.length == 0){ 
+        setActiveAction(null);
+      } 
+      else{
+        setActiveAction(actionTypes[actionType]);
+      }
     } else {
       setActiveAction(null);
     }

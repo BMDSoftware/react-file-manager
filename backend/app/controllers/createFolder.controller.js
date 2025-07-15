@@ -1,52 +1,37 @@
-const FileSystem = require("../models/FileSystem.model");
 const fs = require("fs");
 const path = require("path");
+const BASE_PATH = require('./filesystem.controller');
+const normalizePath = require('./utils.controller');
 
 const createFolder = async (req, res) => {
-  // #swagger.summary = 'Creates a new folder.'
-  /*  #swagger.parameters['body'] = {
-          in: 'body',
-          required: true,
-          schema: {$ref: '#/definitions/CreateFolder'}
-      }
-  */
+
   try {
-    const { name, parentId } = req.body;
+    const { name, parentId, workspace } = req.body;
 
     // Path calculation
     let folderPath = "";
     if (parentId) {
-      const parentFolder = await FileSystem.findById(parentId);
-      if (!parentFolder || !parentFolder.isDirectory) {
-        return res.status(400).json({ error: "Invalid parentId" });
-      }
-      folderPath = `${parentFolder.path}/${name}`;
+      folderPath = `${parentId}/${name}`; // parentId already contains information about workspace
     } else {
-      folderPath = `/${name}`; // Root Folder
+      folderPath = `${workspace}/${name}`; // Root Folder
     }
-    //
 
     // Physical folder creation using fs
-    const fullFolderPath = path.join(__dirname, "../../public/uploads", folderPath);
-    if (!fs.existsSync(fullFolderPath)) {
-      await fs.promises.mkdir(fullFolderPath, { recursive: true });
+    const fullPath = normalizePath(path.join(BASE_PATH, folderPath));
+
+    if (!fs.existsSync(fullPath)) {
+      await fs.promises.mkdir(fullPath, { recursive: true });
     } else {
       return res.status(400).json({ error: "Folder already exists!" });
     }
-    //
 
-    const newFolder = new FileSystem({
-      name,
+    const newFolder = {
+      _id: folderPath,
+      name: name,
       isDirectory: true,
-      path: folderPath,
-      parentId: parentId || null,
-    });
+      path: folderPath.replace(workspace, ""),
+    }
 
-    await newFolder.save();
-
-    /* #swagger.responses[201] = {
-      schema: { $ref: '#/definitions/Folder' },
-      } */
     res.status(201).json(newFolder);
   } catch (error) {
     res.status(500).json({ error: error.message });

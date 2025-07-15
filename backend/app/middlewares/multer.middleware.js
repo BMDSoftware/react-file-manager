@@ -1,22 +1,24 @@
 const multer = require("multer");
 const path = require("path");
-const FileSystem = require("../models/FileSystem.model");
 const fs = require("fs");
+
+const BASE_PATH = require("../controllers/filesystem.controller");
 
 const storage = multer.diskStorage({
   destination: async (req, file, cb) => {
-    let uploadPath = path.join(__dirname, "../../public/uploads");
+    let uploadPath = BASE_PATH;
 
     if (req.body.parentId) {
       try {
-        const parentFolder = await FileSystem.findById(req.body.parentId);
-        if (!parentFolder || !parentFolder.isDirectory) {
-          return cb(new Error("Invalid parentId!"), false);
-        }
-        uploadPath = path.join(__dirname, "../../public/uploads", parentFolder.path);
+        parentFolderPath = req.body.parentId;
+        uploadPath = path.join(BASE_PATH, parentFolderPath);
       } catch (error) {
         return cb(error, false);
       }
+    }
+    
+    else{
+      uploadPath = path.join(BASE_PATH, req.body.workspace);
     }
 
     const fullFilePath = path.join(uploadPath, file.originalname);

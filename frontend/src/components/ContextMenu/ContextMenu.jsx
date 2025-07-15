@@ -83,7 +83,7 @@ const ContextMenu = ({ filesViewRef, contextMenuRef, menuItems, visible, clickPo
           <ul>
             {menuItems
               .filter((item) => !item.hidden)
-              .map((item, index) => {
+              .map((item, index, array) => {
                 const hasChildren = item.hasOwnProperty("children");
                 const activeSubMenu = activeSubMenuIndex === index && hasChildren;
                 return (
@@ -108,7 +108,7 @@ const ContextMenu = ({ filesViewRef, contextMenuRef, menuItems, visible, clickPo
                         </>
                       )}
                     </li>
-                    {item.divider && <div className="divider"></div>}
+                    {index !== array.length - 1 && <div className="divider"></div>}
                   </div>
                 );
               })}
