@@ -212,6 +212,7 @@ const FileItem = ({
             id={file.name}
             checked={fileSelected}
             className={`selection-checkbox ${checkboxClassName}`}
+            labelClassName={`selection-checkbox-label`}
             onChange={handleCheckboxChange}
             onClick={(e) => e.stopPropagation()}
           />
