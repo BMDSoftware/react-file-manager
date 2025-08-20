@@ -1,7 +1,7 @@
 {
   "name": "@bmdsoftware/react-file-manager",
   "private": false,
-  "version": "1.0.3-beta.1",
+  "version": "1.0.4-beta.3",
   "type": "module",
   "module": "dist/react-file-manager.es.js",
   "files": [
