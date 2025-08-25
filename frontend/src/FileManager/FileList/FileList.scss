@@ -67,10 +67,15 @@
       background-color: $item-hover-color;
     }
 
-    .selection-checkbox {
+    .selection-checkbox-label {
       position: absolute;
-      left: 5px;
-      top: 8px;
+      top: 0;
+      left: 0;
+      padding: 8px 5px;
+    }
+
+    .selection-checkbox {
+      position: static;
     }
 
     .hidden {
@@ -199,8 +204,13 @@
       background-color: unset;
     }
 
+    .selection-checkbox-label {
+      padding-top: 12px;
+      padding-bottom: 12px;
+    }
+
     .selection-checkbox {
-      top: 12px;
+      position: static;
     }
 
     .file-name {
