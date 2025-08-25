@@ -92,7 +92,9 @@ const FileItem = ({
     e.stopPropagation();
     if (file.isEditing) return;
 
-    handleFileRangeSelection(e.shiftKey, e.ctrlKey);
+    // Crude way to support MacOS: consider the meta key as well (i.e. command key).
+    // See https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/ctrlKey.
+    handleFileRangeSelection(e.shiftKey, e.ctrlKey || e.metaKey);
 
     const currentTime = new Date().getTime();
     if (currentTime - lastClickTime < 300) {
