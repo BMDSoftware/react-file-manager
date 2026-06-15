@@ -206,7 +206,7 @@
     padding: 15px;
     padding-left: 33px;
     margin: 0;
-    width: calc(70% - 30px);
+    flex-grow: 1;
 
     &:hover {
       background-color: unset;
