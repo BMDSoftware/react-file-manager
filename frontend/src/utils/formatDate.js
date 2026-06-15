@@ -1,4 +1,4 @@
-export const formatDate = (date) => {
+export const formatDate = (date, type = "string") => {
   if (!date || isNaN(Date.parse(date))) return "";
 
   date = new Date(date);
@@ -11,5 +11,15 @@ export const formatDate = (date) => {
   const day = date.getDate();
   const year = date.getFullYear();
 
-  return `${month}/${day}/${year} ${hours}:${minutes < 10 ? "0" + minutes : minutes} ${ampm}`;
+  const strDate = `${month}/${day}/${year}`;
+  const strTime = `${hours}:${minutes < 10 ? "0" + minutes : minutes} ${ampm}`;
+
+  switch (type) {
+    case "string":
+      return `${strDate} ${strTime}`;
+    case "date-time":
+      return [strDate, strTime];
+    default:
+      throw new Error(`Unsupported format type: ${type}`);
+  }
 };
