@@ -187,6 +187,8 @@ const FileItem = ({
     setCheckboxClassName(selectedFileIndexes.includes(index) ? "visible" : "hidden");
   }, [selectedFileIndexes]);
 
+  const [date, time] = formatDate(file.updatedAt, "date-time");
+
   return (
     <div
       className={`file-item-container ${dropZoneClass} ${
@@ -252,7 +254,7 @@ const FileItem = ({
 
       {activeLayout === "list" && (
         <>
-          <div className="modified-date">{formatDate(file.updatedAt)}</div>
+          <div className="modified-date">{date}<br/>{time}</div>
           <div className="size">{file?.size > 0 ? getDataSize(file?.size) : ""}</div>
         </>
       )}
