@@ -4,8 +4,6 @@ import { useSelection } from "../../contexts/SelectionContext";
 import { useFileNavigation } from "../../contexts/FileNavigationContext";
 
 const FilesHeader = ({ unselectFiles, children }) => {
-  const [showSelectAll, setShowSelectAll] = useState(false);
-
   const { selectedFiles, setSelectedFiles } = useSelection();
   const { currentPathFiles } = useFileNavigation();
 
@@ -16,22 +14,15 @@ const FilesHeader = ({ unselectFiles, children }) => {
   const handleSelectAll = (e) => {
     if (e.target.checked) {
       setSelectedFiles(currentPathFiles);
-      setShowSelectAll(true);
     } else {
       unselectFiles();
     }
   };
 
   return (
-    <div
-      className="files-header"
-      onMouseOver={() => setShowSelectAll(true)}
-      onMouseLeave={() => setShowSelectAll(false)}
-    >
+    <div className="files-header">
       <div className="file-select-all">
-        {(showSelectAll || allFilesSelected) && (
-          <Checkbox checked={allFilesSelected} onChange={handleSelectAll} title="Select all" disabled={currentPathFiles.length === 0} />
-        )}
+        <Checkbox checked={allFilesSelected} onChange={handleSelectAll} title="Select all" disabled={currentPathFiles.length === 0} />
       </div>
       {children}
     </div>
