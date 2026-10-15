@@ -22,7 +22,7 @@ const FilesHeader = ({ unselectFiles, children }) => {
   return (
     <div className="files-header">
       <div className="file-select-all">
-        <Checkbox checked={allFilesSelected} onChange={handleSelectAll} title="Select all" disabled={currentPathFiles.length === 0} />
+        <Checkbox checked={allFilesSelected} onChange={handleSelectAll} title={allFilesSelected ? "Deselect all" : "Select all"} disabled={currentPathFiles.length === 0} />
       </div>
       {children}
     </div>
